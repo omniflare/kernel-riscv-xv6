@@ -6,6 +6,11 @@
 
 void execute_command(const char *cmd);
 
+static inline void mmio_write(uint64_t addr, uint64_t value) {
+  *(volatile uint64_t *)addr = value;
+}
+extern void _start(void); //from entry.s
+
 int main() {
 
   char buf[CMD_BUF_SIZE];
@@ -37,21 +42,25 @@ int main() {
 }
 
 void execute_command(const char *cmd) {
-    if (strcmp(cmd, "help") == 0) {
-            console_puts("Commands:\n");
-            console_puts("  hello  - prints greeting\n");
-            console_puts("  clear  - clears screen\n");
-            console_puts("  echo X - prints X\n");
-            console_puts("  reboot - resets QEMU\n");
-        } else if (strcmp(cmd, "hello") == 0) {
-            console_puts("Hello, user!\n");
-        } else if (strcmp(cmd, "clear") == 0) {
-            // ANSI escape sequence for clear
-            console_puts("\033[2J\033[H");
-        } else if (strncmp(cmd, "echo ", 5) == 0) {
-            console_puts(cmd + 5);
-            console_putc('\n');
-        } else if (cmd[0] != '\0') {
-            console_puts("Unknown command. Type 'help'.\n");
-        }
+  if (strcmp(cmd, "help") == 0) {
+    console_puts("Commands:\n");
+    console_puts("  hello  - prints greeting\n");
+    console_puts("  clear  - clears screen\n");
+    console_puts("  echo X - prints X\n");
+    console_puts("  reboot - resets QEMU\n");
+  } else if (strcmp(cmd, "hello") == 0) {
+    console_puts("Hello, user!\n");
+  } else if (strcmp(cmd, "clear") == 0) {
+    // ANSI escape sequence for clear
+    console_puts("\033[2J\033[H");
+  } else if (strncmp(cmd, "echo ", 5) == 0) {
+    console_puts(cmd + 5);
+    console_putc('\n');
+  } else if (strcmp(cmd, "reboot") == 0) {
+    console_puts("Rebooting...\n");
+    void (*restart)(void) = _start;
+    restart(); // jump back to entry point
+  } else if (cmd[0] != '\0') {
+    console_puts("Unknown command. Type 'help'.\n");
+  }
 }
