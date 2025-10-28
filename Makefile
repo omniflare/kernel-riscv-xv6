@@ -1,5 +1,5 @@
 KERNEL_DIR = kernel
-OBJS = $(KERNEL_DIR)/entry.o $(KERNEL_DIR)/main.o $(KERNEL_DIR)/console.o $(KERNEL_DIR)/string.o
+OBJS = $(KERNEL_DIR)/entry.o $(KERNEL_DIR)/main.o $(KERNEL_DIR)/console.o $(KERNEL_DIR)/string.o $(KERNEL_DIR)/fs.o $(KERNEL_DIR)/shell.o
 
 CROSS = riscv64-linux-gnu-
 CC = $(CROSS)gcc
